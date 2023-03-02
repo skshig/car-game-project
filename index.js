@@ -3,7 +3,6 @@ const gameContainer = document.querySelector('.game');
 const scoreContainer = document.querySelector('.score') //score increment after game starts
 
 
-let prevoiusRenderedTime = 0;
 let carPosition = {
     x:0,
     y:0
@@ -20,6 +19,28 @@ function playGame(milliseconds){
     // prevoiusRenderedTime = milliseconds;
     // window.requestAnimationFrame(playGame)
 }
+//this func is called infinitely every ms to give perception of moving cars and screen.
+// car's position needs to be changed to make them look like moving
+function renderGame(milliseconds){
+    const car = document.querySelector('.car');
+    if(player.ArrowUp){
+        carPosition.y -= 5;
+    }
+    if(player.ArrowDown){
+        carPosition.y += 5;
+    }
+    if(player.ArrowLeft){
+        carPosition.x -= 5; 
+    }
+    if(player.ArrowRight){
+        carPosition.x  += 5;
+    }
+    car.style.top = carPosition.y + 'px';
+    car.style.left = carPosition.x + 'px';
+
+    window.requestAnimationFrame(renderGame); //game should render infinitely untill collision
+
+}
 
 function startGame(){ //this function needs to be called when start is clicked. to do that an evenlistener needs to be added for click
     //hide the start container
@@ -28,6 +49,10 @@ function startGame(){ //this function needs to be called when start is clicked. 
     // create a car
     const car = document.createElement('div');
     car.setAttribute('class', 'car');
+    const carTop = car.offsetTop;
+    const carLeft = car.offsetLeft;
+    carPosition.y = carTop;
+    carPosition.x= carLeft;
 
     // Add in inside game container
     gameContainer.appendChild(car);
@@ -40,17 +65,20 @@ function startGame(){ //this function needs to be called when start is clicked. 
         gameContainer.appendChild(line); //adding lines in game area
         top += 150;
     }
+    window.requestAnimationFrame(renderGame);//it is a browser api
 }
 
 function handleKeyUp(e){
-    e.preventDefault();
-    console.log(e.key);
+    e.preventDefault(); //keys have their default func, it is to prevent that and set keys' func to our own use
+    //true bcoz the time key is pressed car moves left or right
+    player[e.key] = true; //true when a key is pressed and it's state is stored in our object
 } 
 function handleKeyDown(e){
 e.preventDefault();
 console.log(e.key);
+// the moment key is unpressed car stops only screen moves
+player[e.key] = false;
 }
-window.requestAnimationFrame(playGame);
 document.addEventListener('keyup', handleKeyUp);
 document.addEventListener('keydown', handleKeyDown);
 startConatiner.addEventListener('click',startGame) //here function name passed and not called bcoz js will call the function once event occurs or click happens
