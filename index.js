@@ -23,16 +23,18 @@ function playGame(milliseconds){
 // car's position needs to be changed to make them look like moving
 function renderGame(milliseconds){
     const car = document.querySelector('.car');
-    if(player.ArrowUp){
+    const box = gameContainer.getBoundingClientRect();
+
+    if(player.ArrowUp && carPosition.y > box.top){
         carPosition.y -= 5;
     }
-    if(player.ArrowDown){
+    if(player.ArrowDown && carPosition.y < box.top){
         carPosition.y += 5;
     }
-    if(player.ArrowLeft){
+    if(player.ArrowLeft && carPosition.x > 0){
         carPosition.x -= 5; 
     }
-    if(player.ArrowRight){
+    if(player.ArrowRight && carPosition.x < box.right){
         carPosition.x  += 5;
     }
     car.style.top = carPosition.y + 'px';
@@ -49,13 +51,16 @@ function startGame(){ //this function needs to be called when start is clicked. 
     // create a car
     const car = document.createElement('div');
     car.setAttribute('class', 'car');
+   
+
+    // Add in inside game container
+    gameContainer.appendChild(car);
     const carTop = car.offsetTop;
     const carLeft = car.offsetLeft;
     carPosition.y = carTop;
     carPosition.x= carLeft;
 
-    // Add in inside game container
-    gameContainer.appendChild(car);
+    var x= 0;
     let top = 0; //bcoz of positon:abs lines stack up on each other that is why top value should be 0 but as soon as game starts value should be 100.
     //creating divider lines. 4 lines appear at a time so i<4
     for(let i =0; i < 4; i++){
